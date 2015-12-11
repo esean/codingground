@@ -1,25 +1,25 @@
 #include <stdio.h>
 #include <stdint.h>
 
-typedef uint8_t FP_UINT8;
-typedef int16_t FP_INT16;
-typedef uint16_t FP_UINT16;
+typedef uint8_t UINT8;
+typedef int16_t INT16;
+typedef uint16_t UINT16;
 
-#define FP_ABS(_x)      (((_x)>0) ? (_x) : (-(_x)))
+#define ABS(_x)      (((_x)>0) ? (_x) : (-(_x)))
 
 #define ATAN_TABLE_SIZE 32
 
-static const FP_UINT8 atanTable[ATAN_TABLE_SIZE] =
+static const UINT8 atanTable[ATAN_TABLE_SIZE] =
 {
     0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 22, 24, 25, 27,
     28, 29, 31, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
 };  
     
-FP_INT16 fp_arctan2( FP_INT16 y, FP_INT16 x )
+INT16 arctan2( INT16 y, INT16 x )
 {
-    FP_UINT16 ax = FP_ABS(x);
-    FP_UINT16 ay = FP_ABS(y);
-    FP_UINT8 angle;
+    UINT16 ax = ABS(x);
+    UINT16 ay = ABS(y);
+    UINT8 angle;
             
     if (ax == 0 && ay == 0)
         return 0;
@@ -48,9 +48,9 @@ FP_INT16 fp_arctan2( FP_INT16 y, FP_INT16 x )
 }
 
 int main(int c, char *d[]) {
-	FP_UINT8 i,j;
+	UINT8 i,j;
 	for(i=0,j=100;i<=100;i++,j--) {
-		printf("%d %d => %d\n",i,j,fp_arctan2(i,j));
+		printf("%d %d => %d\n",i,j,arctan2(i,j));
 	} 
 	return 0;
 }
