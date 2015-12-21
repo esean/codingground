@@ -1,30 +1,46 @@
 #include <iostream>
 #include <stddef.h>
 #include <assert.h>
-// #include <vector>
 #include <map>
 #include <string>
 
 using namespace std;
 
 //----------------------------
-// generic singleton template
+// Generic singleton template
+//
+// NOTE: following #def controls if the
+// singleton uses dynamic memory 'new'.
+//
+#define SINGLETON_USE_DYNAMIC_MEMORY
+//
 template<class T>
 class singleton {
     public:
         static T* Instance() {
+#ifdef SINGLETON_USE_DYNAMIC_MEMORY
+		#warning "SINGLETON: using new"
             if (m_inst == NULL) m_inst = new T();
             assert(m_inst != NULL);
             return m_inst;
-        }
+#else
+		#warning "SINGLETON: not using new"
+		static T inst;
+		return &inst;
+#endif
+	}
     private:
+#ifdef SINGLETON_USE_DYNAMIC_MEMORY
         static T* m_inst;
+#endif
         singleton();
         ~singleton();
         singleton(singleton const&);
         singleton& operator=(singleton const&);
 };
+#ifdef SINGLETON_USE_DYNAMIC_MEMORY
 template<class T> T* singleton<T>::m_inst = NULL; 
+#endif
 //----------------------------
 
 class config {
@@ -40,19 +56,6 @@ class config {
     private:
         map<string,string> m_map;
 };
-
-// template<typename T>
-// class queue {
-//     public:
-//         void push(T x) { mQ.push_back(x); }
-//         T pop() { 
-//             T tmp = mQ.back();
-//             mQ.pop_back();
-//             return tmp;
-//         }
-//     private:
-//         vector<T> mQ;
-// };
 
 typedef singleton<config> Config;
 
@@ -73,12 +76,6 @@ int main()
     printf("config remove bump = %d\n",ok);
     Config::Instance()->dump_config();
     
-//   queue<int> Q;
-//   Q.push(3);
-//   Q.push(5);
-//   printf("POP=%d\n",Q.pop());
-//   printf("POP=%d\n",Q.pop());
-   
    return 0;
 }
 
