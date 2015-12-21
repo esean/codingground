@@ -63,11 +63,14 @@ int main()
     Config::Instance()->dump_config();
     
     Config::Instance()->setKeyVal("version","5");
+    Config::Instance()->setKeyVal("config","1.1");
     printf("config version = %s\n",Config::Instance()->getVal("version").c_str());
     Config::Instance()->dump_config();
      
     bool ok = Config::Instance()->delKey("version");
     printf("config remove version = %d\n",ok);
+    ok = Config::Instance()->delKey("bump");
+    printf("config remove bump = %d\n",ok);
     Config::Instance()->dump_config();
     
 //   queue<int> Q;
