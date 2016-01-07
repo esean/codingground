@@ -9,7 +9,8 @@ string rotate_by(string str, int k)
 {
 	int sz = str.size();
 	// make sure we don't do extra work
-	int actual_shift = (k % sz)+1;
+	int actual_shift;
+	if (k>0) actual_shift = (k % sz)+1;
 	string s1 = str.substr(actual_shift,sz-actual_shift);
 	string s2 = str.substr(0,actual_shift);
 	return s1 + s2;
@@ -21,7 +22,8 @@ void rotate_byC(const char* str, int k, char* ret)
 	char *d = ret;
 	int sz = strlen(str);
 	// make sure we don't do extra work
-	int actual_shift = (k % sz)+1;
+	int actual_shift;
+	if (k>0) actual_shift = (k % sz)+1;
 	while (actual_shift) {
 		++s; --actual_shift;
 	}
