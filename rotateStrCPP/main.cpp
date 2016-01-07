@@ -33,32 +33,32 @@ void rotate_byC(const char* str, int k, char* ret)
 	}
 }
 
-void print_int_array(int* arr, int sz, char* str)
+void print_int_array(int* arr, int sz)
 {
-	printf("INT_ARRAY[%d]:%s:",sz,str);
+	printf("INT_ARRAY[%d]:",sz);
         for (int i=0; i<sz; ++i)
                 printf("%d,",arr[i]);
         printf("\n");
 }
 
-void reverse(int* num, int sz)
+void reverse(int* num, int left, int right)
 {
-	int i,j;
-	print_int_array(num,sz,"BEFORE");
-	for (i=0, j=sz-1; i<j; ++i,--j)
+	int* s = num + left;
+	int* e = num + right;
+	while (s < e)
 	{
-		int tmp = num[i];
-		num[i] = num[j];
-		num[j] = tmp;
+		int tmp = *s;
+		*s = *e;
+		*e = tmp;
+		++s; --e;
 	}
-	print_int_array(num,sz,"AFTER");
 }
 
 void rotate_array(int* numarr, int sz, int k)
 {
-	reverse(numarr,sz-k);
-	reverse(numarr+sz-k,k);
-	reverse(numarr,sz);
+	reverse(numarr,0,sz-1);
+	reverse(numarr,0,k-1);
+	reverse(numarr,k,sz-1);
 }
 
 int main()
@@ -74,7 +74,7 @@ int main()
 	
 	int msg3[] = {1,2,3,4,5,6,7};
 	rotate_array(msg3,sizeof(msg3)/sizeof(msg3[0]),3);
-	print_int_array(msg3,sizeof(msg3)/sizeof(msg3[0]),"FINAL");
+	print_int_array(msg3,sizeof(msg3)/sizeof(msg3[0]));
 
   	return 0;
 }
