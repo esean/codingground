@@ -47,6 +47,8 @@ template<class T> bool node<T>::is_circular() {
 		n1 = n1->pNext;
 		n2 = n2->pNext->pNext;
 	}
+	// can't get here
+	return false;
 }
 
 int main()
