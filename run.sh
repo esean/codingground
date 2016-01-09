@@ -8,7 +8,7 @@ proc() {
 	echo "-----------------------------------" >> README.md
 	echo >> README.md
 	echo -e "$1:\nExpected output:\n" >> README.md
-	./main >> README.md
+	./main | awk '{printf("%s\n\n",$0);}' >> README.md
 	svn add README.md
 	rm main
 	popd
