@@ -1,2 +1,2 @@
 all:
-	g++ -std=c++11 -o main *.cpp
+	gcc -Wsign-compare -Wall -o main *.c
