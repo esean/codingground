@@ -5,4 +5,6 @@ strdupC:
 Expected output:
 
 Ok, starting up...
+
 USAGE: [word #1] [word #2]
+

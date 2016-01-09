@@ -5,4 +5,6 @@ countbitsC:
 Expected output:
 
 ./main [decimal]
+
 Counts bits in [decimal]
+
