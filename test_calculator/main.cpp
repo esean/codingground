@@ -15,6 +15,18 @@ public:
 	int multiply(int x, int y) { return x*y; }
 	int divide(int x, int y) { return x/y; }
 
+	struct arithmeticStruct {
+		char op;
+		arithmeticFcn fcn;
+	};
+	static const int NUM_OPS = 4;
+	arithmeticStruct arithmeticArray[NUM_OPS] = {
+		{'+',&calculator::add},
+		{'-',&calculator::subtract},
+		{'*',&calculator::multiply},
+		{'/',&calculator::divide},
+	};
+
 	arithmeticFcn getArithmeticFunction(char op);
 	int perform_operation(int x, int y, char op);
 };
@@ -42,6 +54,13 @@ char calculator::get_user_operator() {
 	return op;
 }
 arithmeticFcn calculator::getArithmeticFunction(char op) {
+#if 1
+	for (int idx=0; idx < NUM_OPS; ++idx) {
+		if (op == arithmeticArray[idx].op)
+			return arithmeticArray[idx].fcn;
+	}
+	throw "couldn't find that op";
+#else
 	switch (op) {
 		case '+':	return &calculator::add;
 		case '-':	return &calculator::subtract;
@@ -52,6 +71,7 @@ arithmeticFcn calculator::getArithmeticFunction(char op) {
 			throw "invalid operator in op";
 			break;
 	}
+#endif
 }
 int calculator::perform_operation(int x, int y, char op) {
 	arithmeticFcn fcn = getArithmeticFunction(op);
