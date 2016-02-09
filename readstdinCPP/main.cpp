@@ -63,6 +63,10 @@ int main()
     string str;
     while ( getline(cin,str)) {
 
+        // make sure to strip any \r from windows systems
+        if (!str.empty() && str[str.size() - 1] == '\r')
+            str.erase(str.size() - 1);
+        
         // print and continue if a header row, augment with our stuff
         if (is_header_line(str))
         {
