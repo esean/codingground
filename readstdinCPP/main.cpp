@@ -13,41 +13,73 @@ using namespace std;
 // 2,  0.001172,   0.187205
 //
 
+const string our_csv_headers = "avg,delta,integrate";
+
+
 bool is_header_line(string str) {
     // if first char in line is '#', this is header line
     return (str.at(0) == '#');
 }
 
+void read_3_columns_from_csv_line(string str, double* sample, double* utc, double* data)
+{
+    if (!sample || !utc || !data) {
+        cerr << "ERROR: read_3_columns_from_csv_line NULLs!" << endl;
+        return;
+    }
+
+    stringstream ss(str);
+    string ssample,sutc,sdata;
+    getline(ss,ssample,',');
+    getline(ss,sutc,',');
+    getline(ss,sdata,',');
+
+    *sample = atof(ssample.c_str());
+    *utc = atof(sutc.c_str());
+    *data = atof(sdata.c_str()); 
+}
+
+double maintain_avg(double in_data) {
+    static long double sum = 0.0f;
+    static long long count = 0;
+    sum += in_data;
+    ++count;
+    return sum/count;
+}
+
+double maintain_integrate(double in_data) {
+    static long double sum = 0.0f;
+    sum += in_data;
+    return sum;
+}
+
 int main()
 {
-    string str;
-
     //  Don't sync C++ and C I/O
     // http://www.manticmoo.com/articles/jeff/programming/c++/making-io-streams-efficient-in-c++.php
     ios_base::sync_with_stdio(false);
 
     // get a line
+    string str;
     while ( getline(cin,str)) {
 
-        // print and continue if a header row
+        // print and continue if a header row, augment with our stuff
         if (is_header_line(str))
         {
-            cout << str << endl;
+            cout << str << "," << our_csv_headers << endl;
             continue;
         }
 
         // now break line into csv components
-        string sample,utc,data;
-        stringstream ss(str);
-        getline(ss,sample,',');
-        getline(ss,utc,',');
-        getline(ss,data,',');
+        double sample,utc,data;
+        read_3_columns_from_csv_line(str,&sample,&utc,&data);
 
-        double utcf,dataf;
-        utcf = atof(utc.c_str());
-        dataf = atof(data.c_str());
+        // compute our stuff
+        double avg = maintain_avg(data);
+        double delta = data - avg;
+        double integrate = maintain_integrate(delta);
 
-        cout << sample << "," << utcf << "," << dataf << endl;
+        cout << sample << "," << utc << "," << data << "," << avg << "," << delta << "," << integrate << endl;
     }
 
 	return 0;
