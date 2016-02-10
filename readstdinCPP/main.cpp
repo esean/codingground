@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <stdbool.h>
+#include <unordered_map>
 
 using namespace std;
 
@@ -13,7 +14,8 @@ using namespace std;
 // 2,  0.001172,   0.187205
 //
 
-const string our_csv_headers = "avg,delta,integrate";
+const string input_csv_headers = "sample,utc,data";
+const string output_csv_headers = "sample,utc,data,avg,delta,integrate";
 
 
 bool is_header_line(string str) {
@@ -21,22 +23,17 @@ bool is_header_line(string str) {
     return (str.at(0) == '#');
 }
 
-void read_3_columns_from_csv_line(string str, double* sample, double* utc, double* data)
-{
-    if (!sample || !utc || !data) {
-        cerr << "ERROR: read_3_columns_from_csv_line NULLs!" << endl;
-        return;
+// loop thru the provided headers while reading from csv line
+unordered_map<string,string> read_csv_line_with_headers(string header, string csv_line, char delim = ',') {
+    unordered_map<string,string> ret;
+    stringstream ss(csv_line), hdrss(header);
+    string str;
+    while (getline(hdrss,str,delim)) {
+        string stmp;
+        getline(ss,stmp,delim);
+        ret[str] = stmp;
     }
-
-    stringstream ss(str);
-    string ssample,sutc,sdata;
-    getline(ss,ssample,',');
-    getline(ss,sutc,',');
-    getline(ss,sdata,',');
-
-    *sample = atof(ssample.c_str());
-    *utc = atof(sutc.c_str());
-    *data = atof(sdata.c_str()); 
+    return ret;
 }
 
 double maintain_avg(double in_data) {
@@ -59,6 +56,8 @@ int main()
     // http://www.manticmoo.com/articles/jeff/programming/c++/making-io-streams-efficient-in-c++.php
     ios_base::sync_with_stdio(false);
 
+    cout << "# " << output_csv_headers << endl;
+    
     // get a line
     string str;
     while ( getline(cin,str)) {
@@ -68,15 +67,13 @@ int main()
             str.erase(str.size() - 1);
         
         // print and continue if a header row, augment with our stuff
-        if (is_header_line(str))
-        {
-            cout << str << "," << our_csv_headers << endl;
-            continue;
-        }
-
+        if (is_header_line(str)) continue;
+        
         // now break line into csv components
-        double sample,utc,data;
-        read_3_columns_from_csv_line(str,&sample,&utc,&data);
+        unordered_map<string,string> csv_cols = read_csv_line_with_headers(input_csv_headers,str);
+        double sample = atof(csv_cols["sample"].c_str());
+        double utc = atof(csv_cols["utc"].c_str());
+        double data = atof(csv_cols["data"].c_str());
 
         // compute our stuff
         double avg = maintain_avg(data);
