@@ -34,7 +34,13 @@ class singleton {
         static T* m_inst;
 #endif
         singleton();
+#ifdef SINGLETON_USE_DYNAMIC_MEMORY
+        ~singleton() {
+            delete m_inst;
+        }
+#else
         ~singleton();
+#endif
         singleton(singleton const&);
         singleton& operator=(singleton const&);
 };
