@@ -42,8 +42,9 @@ template<class T> bool node<T>::is_circular() {
 	if (!n1) return false;
 	n2 = n2->pNext;
 	while (n1) {
+		printf(" is_circ: %d == %d ?\n",n1->value,n2->value);
 		if (n1==n2) return true;
-		if (!n1 || !n2) return false;
+		if (!n1 || !n2 || !n1->pNext || !n2->pNext->pNext) return false;
 		n1 = n1->pNext;
 		n2 = n2->pNext->pNext;
 	}
@@ -58,15 +59,17 @@ int main()
     node<int> first(1);
     node<int> second(2);
     node<int> third(3);
+    node<int> four(4);
 
     first.add_node(&second);
     second.add_node(&third);
+    third.add_node(&four);
   
     printf("Before making circular:\n");
     first.dump();
 
     // make circular
-    third.add_node(&first);
+    four.add_node(&first);
 
     // NO! - don't call
     //first.dump();
