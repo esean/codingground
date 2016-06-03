@@ -6,7 +6,7 @@ using namespace std;
 
 const uint32_t ADC_DC_OFFSET_ADD     = (0xFFFFFF/2);   // 2^24 half-scale, added to 2's comp. ADC data
 
-bool read_value(uint8_t* recv, uint32_t* pValue, uint32_t dc_offset) {
+bool read_value(uint8_t* recv, uint32_t* pValue, int32_t* signedValue, uint32_t dc_offset) {
 
     uint32_t high = (uint32_t)((uint8_t)recv[0] & 0xff) << 16;
     uint32_t mid = (uint32_t)((uint8_t)recv[1] & 0xff) << 8;
@@ -28,6 +28,7 @@ bool read_value(uint8_t* recv, uint32_t* pValue, uint32_t dc_offset) {
     //printf("[0x%X:0x%X:0x%X] => 0x%X(0x%X:%d) + 0x%X(%d) => 0x%X(%d)\n",recv[0],recv[1],recv[2],adc_data,(uint32_t)realneg,realneg,dc_offset,dc_offset,res,res);
 
     *pValue = res;
+    *signedValue = realneg;
     return true;
 }
 int main()
@@ -47,8 +48,9 @@ int main()
         recv[0] = (uint8_t)((in & 0xFF0000) >> 16);
 
         uint32_t comp_val;
-        if (read_value(recv, &comp_val,ADC_DC_OFFSET_ADD)) {
-            printf("%d\n",comp_val);
+        int32_t sign_val;
+        if (read_value(recv, &comp_val, &sign_val, ADC_DC_OFFSET_ADD)) {
+            printf("%d %d %d\n",in,comp_val,sign_val);
             //printf("IN 0x%X -> %d (0x%X)\n",in,comp_val,comp_val);
         } else {
             fprintf(stderr,"FAIL: read_value(%s)\n",str.c_str());
